@@ -1,0 +1,62 @@
+.mission-display {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(42, 42, 42, 0.9);
+  border: 2px solid #4a4a4a;
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 200px;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.mission-title {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mission-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background-color: rgba(74, 74, 74, 0.3);
+  transition: all 0.3s ease;
+}
+
+.mission-item.completed {
+  background-color: rgba(76, 175, 80, 0.3);
+  border: 1px solid rgba(76, 175, 80, 0.6);
+  color: #a5d6a7;
+}
+
+.checkmark {
+  color: #4caf50;
+  font-weight: bold;
+  font-size: 16px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.mission-text {
+  flex: 1;
+}
+

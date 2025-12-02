@@ -9,6 +9,7 @@ interface GameStateContextType {
   resetSpacebarCount: (sceneId: string) => void;
   setRopeCut: (sceneId: string, cut: boolean) => void;
   setHasMoved: (sceneId: string, moved: boolean) => void;
+  setDogOnEdge: (sceneId: string, onEdge: boolean) => void;
 }
 
 const GameStateContext = createContext<GameStateContextType | undefined>(undefined);
@@ -19,6 +20,7 @@ const initialState: GameStateType = {
   spacebarPressCount: {},
   ropeCut: {},
   hasMoved: {},
+  dogOnEdge: {},
 };
 
 export const GameStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -39,6 +41,10 @@ export const GameStateProvider: React.FC<{ children: ReactNode }> = ({ children 
       hasMoved: {
         ...prev.hasMoved,
         [sceneId]: false, // Reset movement state for new scene
+      },
+      dogOnEdge: {
+        ...prev.dogOnEdge,
+        [sceneId]: false, // Reset edge state for new scene
       },
     }));
   };
@@ -83,6 +89,16 @@ export const GameStateProvider: React.FC<{ children: ReactNode }> = ({ children 
     }));
   };
 
+  const setDogOnEdge = (sceneId: string, onEdge: boolean) => {
+    setState((prev: GameStateType) => ({
+      ...prev,
+      dogOnEdge: {
+        ...prev.dogOnEdge,
+        [sceneId]: onEdge,
+      },
+    }));
+  };
+
   const updateObjectPosition = (sceneId: string, objectId: string, position: { x: number; y: number }) => {
     setState((prev: GameStateType) => ({
       ...prev,
@@ -106,6 +122,7 @@ export const GameStateProvider: React.FC<{ children: ReactNode }> = ({ children 
         resetSpacebarCount,
         setRopeCut,
         setHasMoved,
+        setDogOnEdge,
       }}
     >
       {children}

@@ -18,4 +18,5 @@ export interface GameState {
   spacebarPressCount: Record<string, number>;
   ropeCut: Record<string, boolean>;
   hasMoved: Record<string, boolean>;
+  dogOnEdge: Record<string, boolean>;
 }

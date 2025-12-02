@@ -8,13 +8,16 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center;
+  object-position: center bottom;
   user-select: none;
   pointer-events: none;
 }
 
 .dog-sprite {
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  /* Scale to match the dog size in the background image */
+  transform: scale(2);
+  transform-origin: center bottom;
   /* Ensure transparency is preserved */
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;

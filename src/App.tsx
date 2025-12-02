@@ -3,13 +3,14 @@ import { GameStateProvider } from './game/GameState';
 import { SceneManager } from './game/SceneManager';
 import { SceneView } from './components/SceneView';
 import { ControlsDisplay } from './components/ControlsDisplay';
+import { MissionDisplay } from './components/MissionDisplay';
 import { Scene } from './game/types';
 import { scenes } from './scenes/sceneData';
 import { useGameState } from './game/GameState';
 import './App.css';
 
 const GameContent: React.FC = () => {
-  const { state, updateObjectPosition, incrementSpacebarCount, setRopeCut, setHasMoved, changeScene } = useGameState();
+  const { state, updateObjectPosition, incrementSpacebarCount, setRopeCut, setHasMoved, setDogOnEdge, changeScene } = useGameState();
   const [pressedKeys, setPressedKeys] = React.useState<Set<string>>(new Set());
 
   // Create audio references for dog sounds
@@ -59,34 +60,53 @@ const GameContent: React.FC = () => {
         return;
       }
 
-      // Spacebar - play dog sound based on press count
-      if (event.key === ' ') {
-        event.preventDefault();
-        
-        const currentCount = state.spacebarPressCount[state.currentScene] || 0;
-        const newCount = currentCount + 1;
-        
-        // Increment the counter
-        incrementSpacebarCount(state.currentScene);
-        
-        // If pressed more than 3 times, play sniffing sound, otherwise play bark
-        if (newCount > 3) {
-          if (dogSnifingAudioRef.current) {
-            dogSnifingAudioRef.current.currentTime = 0;
-            dogSnifingAudioRef.current.play().catch((error) => {
-              console.error('Error playing sniffing sound:', error);
-            });
+          // Spacebar - play dog sound based on press count
+          if (event.key === ' ') {
+            event.preventDefault();
+
+            const currentCount = state.spacebarPressCount[state.currentScene] || 0;
+            const newCount = currentCount + 1;
+
+            // Increment the counter
+            incrementSpacebarCount(state.currentScene);
+
+            // If pressed more than 3 times, play sniffing sound, otherwise play bark
+            if (newCount > 3) {
+              if (dogSnifingAudioRef.current) {
+                dogSnifingAudioRef.current.currentTime = 0;
+                dogSnifingAudioRef.current.play().catch((error) => {
+                  console.error('Error playing sniffing sound:', error);
+                });
+              }
+            } else {
+              if (dogBarkAudioRef.current) {
+                dogBarkAudioRef.current.currentTime = 0;
+                dogBarkAudioRef.current.play().catch((error) => {
+                  console.error('Error playing bark sound:', error);
+                });
+              }
+            }
+            
+            // Check if all missions are complete after barking (for scene1)
+            if (state.currentScene === 'scene1') {
+              const barkCount = newCount; // Use newCount since we just incremented
+              const isRopeCut = state.ropeCut[state.currentScene] || false;
+              const dogOnEdge = state.dogOnEdge[state.currentScene] || false;
+              
+              // Check current position to see if still on edge
+              const storedPos = state.objectPositions[state.currentScene]?.['dog'];
+              const currentX = storedPos?.x ?? dog.position.x;
+              const isOnLeftEdge = currentX <= 5;
+              const isOnRightEdge = currentX >= 90 - dog.position.width;
+              const isActuallyOnEdge = isOnLeftEdge || isOnRightEdge;
+              
+              // All missions must be complete: rope cut, barked twice, and reached edge
+              if (isRopeCut && barkCount >= 2 && isActuallyOnEdge) {
+                changeScene('scene2');
+              }
+            }
+            return;
           }
-        } else {
-          if (dogBarkAudioRef.current) {
-            dogBarkAudioRef.current.currentTime = 0;
-            dogBarkAudioRef.current.play().catch((error) => {
-              console.error('Error playing bark sound:', error);
-            });
-          }
-        }
-        return;
-      }
 
       // Movement keys - only work if rope is cut
       const isRopeCut = state.ropeCut[state.currentScene] || false;
@@ -106,12 +126,19 @@ const GameContent: React.FC = () => {
           setHasMoved(state.currentScene, true);
         }
         
-        // Check if dog reached left edge to transition to scene 2
-        // Requirements: rope cut, barked at least twice, and reached edge
+        // Check if dog is on left edge (dynamically update based on position)
+        const isOnLeftEdge = newX <= 5;
+        const isOnRightEdge = newX >= 90 - dog.position.width;
+        setDogOnEdge(state.currentScene, isOnLeftEdge || isOnRightEdge);
+        
+        // Check if all missions are complete to transition to scene 2
         if (state.currentScene === 'scene1') {
           const barkCount = state.spacebarPressCount[state.currentScene] || 0;
           const isRopeCut = state.ropeCut[state.currentScene] || false;
-          if (isRopeCut && barkCount >= 2 && newX <= 5) {
+          const dogOnEdge = isOnLeftEdge || isOnRightEdge;
+          
+          // All missions must be complete: rope cut, barked twice, and reached edge
+          if (isRopeCut && barkCount >= 2 && dogOnEdge) {
             changeScene('scene2');
           }
         }
@@ -124,15 +151,48 @@ const GameContent: React.FC = () => {
           setHasMoved(state.currentScene, true);
         }
         
-        // Check if dog reached right edge to transition to scene 2
-        // Requirements: rope cut, barked at least twice, and reached edge
+        // Check if dog is on right edge (dynamically update based on position)
+        const isOnLeftEdge = newX <= 5;
+        const isOnRightEdge = newX >= 90 - dog.position.width;
+        setDogOnEdge(state.currentScene, isOnLeftEdge || isOnRightEdge);
+        
+        // Check if all missions are complete to transition to scene 2
         if (state.currentScene === 'scene1') {
           const barkCount = state.spacebarPressCount[state.currentScene] || 0;
           const isRopeCut = state.ropeCut[state.currentScene] || false;
-          if (isRopeCut && barkCount >= 2 && newX >= 90 - dog.position.width) {
+          const dogOnEdge = isOnLeftEdge || isOnRightEdge;
+          
+          // All missions must be complete: rope cut, barked twice, and reached edge
+          if (isRopeCut && barkCount >= 2 && dogOnEdge) {
             changeScene('scene2');
           }
         }
+      } else if (event.key === 'ArrowUp' || event.key === 'w' || event.key === 'W') {
+        event.preventDefault();
+        const newY = Math.max(0, currentY - 2); // Move up, min 0%
+        updateObjectPosition(state.currentScene, 'dog', { x: currentX, y: newY });
+        // Mark as moved when direction keys are used
+        if (!state.hasMoved[state.currentScene]) {
+          setHasMoved(state.currentScene, true);
+        }
+        
+        // Update edge status (check if still on edge after vertical movement)
+        const isOnLeftEdge = currentX <= 5;
+        const isOnRightEdge = currentX >= 90 - dog.position.width;
+        setDogOnEdge(state.currentScene, isOnLeftEdge || isOnRightEdge);
+      } else if (event.key === 'ArrowDown' || event.key === 's' || event.key === 'S') {
+        event.preventDefault();
+        const newY = Math.min(100 - dog.position.height, currentY + 2); // Move down, max 100% - height
+        updateObjectPosition(state.currentScene, 'dog', { x: currentX, y: newY });
+        // Mark as moved when direction keys are used
+        if (!state.hasMoved[state.currentScene]) {
+          setHasMoved(state.currentScene, true);
+        }
+        
+        // Update edge status (check if still on edge after vertical movement)
+        const isOnLeftEdge = currentX <= 5;
+        const isOnRightEdge = currentX >= 90 - dog.position.width;
+        setDogOnEdge(state.currentScene, isOnLeftEdge || isOnRightEdge);
       }
     };
 
@@ -151,7 +211,7 @@ const GameContent: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [state.currentScene, state.objectPositions, state.spacebarPressCount, state.ropeCut, state.hasMoved, updateObjectPosition, incrementSpacebarCount, setRopeCut, setHasMoved, changeScene]);
+  }, [state.currentScene, state.objectPositions, state.spacebarPressCount, state.ropeCut, state.hasMoved, state.dogOnEdge, updateObjectPosition, incrementSpacebarCount, setRopeCut, setHasMoved, setDogOnEdge, changeScene]);
 
   const renderScene = (scene: Scene) => {
     // Apply position overrides from state
@@ -178,6 +238,7 @@ const GameContent: React.FC = () => {
   return (
     <div className="App">
       <ControlsDisplay pressedKeys={pressedKeys} />
+      <MissionDisplay />
       <SceneManager scenes={scenes} renderScene={renderScene} />
     </div>
   );

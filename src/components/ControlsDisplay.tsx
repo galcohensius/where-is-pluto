@@ -27,11 +27,18 @@ export const ControlsDisplay: React.FC<ControlsDisplayProps> = ({ pressedKeys })
           </div>
         )}
         {isRopeCut && (
-          <div className="control-item">
-            <kbd className={isKeyPressed('ArrowLeft') || isKeyPressed('a') || isKeyPressed('A') ? 'pressed' : ''}>←</kbd>
-            <kbd className={isKeyPressed('ArrowRight') || isKeyPressed('d') || isKeyPressed('D') ? 'pressed' : ''}>→</kbd>
-            <span>Move</span>
-          </div>
+          <>
+            <div className="control-item">
+              <kbd className={isKeyPressed('ArrowLeft') || isKeyPressed('a') || isKeyPressed('A') ? 'pressed' : ''}>←</kbd>
+              <kbd className={isKeyPressed('ArrowRight') || isKeyPressed('d') || isKeyPressed('D') ? 'pressed' : ''}>→</kbd>
+              <span>Move</span>
+            </div>
+            <div className="control-item">
+              <kbd className={isKeyPressed('ArrowUp') || isKeyPressed('w') || isKeyPressed('W') ? 'pressed' : ''}>↑</kbd>
+              <kbd className={isKeyPressed('ArrowDown') || isKeyPressed('s') || isKeyPressed('S') ? 'pressed' : ''}>↓</kbd>
+              <span>Move</span>
+            </div>
+          </>
         )}
       </div>
     </div>
