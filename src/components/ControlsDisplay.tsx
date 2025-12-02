@@ -14,16 +14,16 @@ export const ControlsDisplay: React.FC<ControlsDisplayProps> = ({ pressedKeys })
 
   return (
     <div className="controls-display">
-      <div className="controls-title">Controls</div>
+      <div className="controls-title">מקשים</div>
       <div className="controls-list">
         <div className="control-item">
           <kbd className={isKeyPressed(' ') ? 'pressed' : ''}>Space</kbd>
-          <span>Barks</span>
+          <span>הב הב</span>
         </div>
         {!isRopeCut && state.currentScene === 'scene1' && (
           <div className="control-item">
             <kbd className={isKeyPressed('Enter') ? 'pressed' : ''}>Enter</kbd>
-            <span>Cut the rope</span>
+            <span>קרע את החבל</span>
           </div>
         )}
         {isRopeCut && (
@@ -31,12 +31,12 @@ export const ControlsDisplay: React.FC<ControlsDisplayProps> = ({ pressedKeys })
             <div className="control-item">
               <kbd className={isKeyPressed('ArrowLeft') || isKeyPressed('a') || isKeyPressed('A') ? 'pressed' : ''}>←</kbd>
               <kbd className={isKeyPressed('ArrowRight') || isKeyPressed('d') || isKeyPressed('D') ? 'pressed' : ''}>→</kbd>
-              <span>Move</span>
+              <span>צעד</span>
             </div>
             <div className="control-item">
               <kbd className={isKeyPressed('ArrowUp') || isKeyPressed('w') || isKeyPressed('W') ? 'pressed' : ''}>↑</kbd>
               <kbd className={isKeyPressed('ArrowDown') || isKeyPressed('s') || isKeyPressed('S') ? 'pressed' : ''}>↓</kbd>
-              <span>Move</span>
+              <span>צעד</span>
             </div>
           </>
         )}

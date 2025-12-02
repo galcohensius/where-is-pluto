@@ -12,9 +12,9 @@ export const MissionDisplay: React.FC = () => {
   const getMissionObjectives = () => {
     if (state.currentScene === 'scene1') {
       return [
-        { id: 'cut-rope', text: 'Cut the rope', completed: isRopeCut },
-        { id: 'bark-twice', text: 'Bark twice', completed: barkCount >= 2 },
-        { id: 'walk-to-edge', text: 'Walk to either side', completed: dogOnEdge },
+        { id: 'cut-rope', text: 'קרע את החבל', completed: isRopeCut },
+        { id: 'bark-twice', text: 'נבח הב הב', completed: barkCount >= 2 },
+        { id: 'walk-to-edge', text: 'ונסע את רגליו', completed: dogOnEdge },
       ];
     }
     return [];
@@ -26,7 +26,7 @@ export const MissionDisplay: React.FC = () => {
 
   return (
     <div className="mission-display">
-      <div className="mission-title">Mission</div>
+      <div className="mission-title">משימות</div>
       <div className="mission-list">
         {objectives.map((objective) => (
           <div
