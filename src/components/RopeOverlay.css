@@ -1,0 +1,28 @@
+.rope-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.rope-line {
+  position: absolute;
+  /* Position the rope from dog to tree - adjust these values based on p1.png layout */
+  left: 30%;
+  top: 25%;
+  width: 25%;
+  height: 2px;
+  background: linear-gradient(to right, #d4a017 0%, #d4a017 50%, transparent 50%, transparent 100%);
+  transform: rotate(-15deg);
+  transform-origin: left center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* When rope is cut, hide it */
+.rope-overlay.cut .rope-line {
+  display: none;
+}
+
